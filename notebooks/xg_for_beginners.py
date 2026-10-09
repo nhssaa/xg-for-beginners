@@ -21,6 +21,10 @@ def _(mo):
         Today you will build that number yourself, from **8,000+ real Bundesliga shots**,
         one clue at a time. No install needed: press **Run** and everything happens
         right here in your browser.
+
+        You have already seen the finished product: broadcasters like the BBC show xG
+        after big matches, and clubs like Brentford famously built their whole
+        recruitment on numbers like these. Now you get to see how it is made.
         """
     )
     return
@@ -738,6 +742,9 @@ def _(mo):
            who scores more than their xG says they should?
         4. **Break it.** Train on the first half of the season, test on the
            second. Does the model still work on matches it has never seen?
+
+        **What good looks like when you finish:** you can explain one of your charts
+        in one plain sentence, and say one thing it does *not* tell you.
         """
     )
     return
