@@ -1,0 +1,9 @@
+# NHSSAA xG lesson - local dependencies
+marimo>=0.9
+pandas
+numpy
+matplotlib
+mplsoccer
+lightgbm        # the model library from the webinar (browser runs use scikit-learn)
+scikit-learn
+kloppy>=3.18    # used by scripts/build_dataset.py to rebuild the dataset
