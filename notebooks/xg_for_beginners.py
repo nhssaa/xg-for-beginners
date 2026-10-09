@@ -200,14 +200,73 @@ def _(mo):
 
 @app.cell
 def _(GOAL_X, shots):
-    from mplsoccer import Pitch
+    try:
+        from mplsoccer import Pitch
+    except ImportError:
+        # Zero-install fallback (this is what runs in the browser): a small
+        # pitch drawn with plain matplotlib that speaks the same
+        # draw()/scatter() language as mplsoccer's Pitch.
+        import matplotlib.patches as _mpatches
+        import matplotlib.pyplot as _plt
+
+        class Pitch:
+            """Tiny stand-in for mplsoccer.Pitch, same uefa layout (0-105 x 0-68)."""
+
+            def __init__(self, **kwargs):
+                pass
+
+            def draw(self, figsize=(12, 8)):
+                fig, ax = _plt.subplots(figsize=figsize)
+                for i in range(10):
+                    ax.add_patch(
+                        _mpatches.Rectangle(
+                            (i * 10.5, 0),
+                            10.5,
+                            68,
+                            facecolor=("#3d995b" if i % 2 == 0 else "#359150"),
+                            edgecolor="none",
+                        )
+                    )
+                line = {"edgecolor": "white", "linewidth": 2, "fill": False}
+                ax.add_patch(_mpatches.Rectangle((0, 0), 105, 68, **line))
+                ax.plot([52.5, 52.5], [0, 68], color="white", lw=2)
+                ax.add_patch(_mpatches.Circle((52.5, 34), 9.15, **line))
+                for goal_x, direction in ((0, 1), (105, -1)):
+                    ax.add_patch(
+                        _mpatches.Rectangle(
+                            (goal_x if direction == 1 else goal_x - 16.5, 34 - 20.16),
+                            16.5,
+                            40.32,
+                            **line,
+                        )
+                    )
+                    ax.add_patch(
+                        _mpatches.Rectangle(
+                            (goal_x if direction == 1 else goal_x - 5.5, 34 - 9.16),
+                            5.5,
+                            18.32,
+                            **line,
+                        )
+                    )
+                    ax.plot(
+                        goal_x + 11 * direction, 34,
+                        marker="o", color="white", markersize=4,
+                    )
+                ax.set_xlim(-3, 108)
+                ax.set_ylim(-3, 71)
+                ax.set_aspect("equal")
+                ax.axis("off")
+                return fig, ax
+
+            def scatter(self, x, y, ax=None, **kwargs):
+                return ax.scatter(x, y, **kwargs)
 
     pitch = Pitch(
         pitch_type="uefa", pitch_color="grass", line_color="white", stripe=True
     )
     fig, ax = pitch.draw(figsize=(12, 8))
 
-    # mplsoccer's uefa pitch runs 0..105 x 0..68; our data is centered on (0, 0)
+    # uefa pitch runs 0..105 x 0..68; our data is centered on (0, 0)
     plot_x = shots["x"] + GOAL_X
     plot_y = shots["y"] + 34
 
